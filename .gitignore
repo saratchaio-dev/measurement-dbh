@@ -1,0 +1,11 @@
+.DS_Store
+**/.DS_Store
+*.las
+*.laz
+*.copc.laz
+*.e57
+*.pcd
+*.sqlite3
+*.log
+node_modules/
+.local-cache/
