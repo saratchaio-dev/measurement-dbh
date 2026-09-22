@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TD_008 · Mangrove measurement lab</title>
+  <link rel="stylesheet" href="styles.css?v=feedback-1">
+  <link rel="stylesheet" href="learning.css?v=feedback-1">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+  <header><a class="brand" href="./"><span class="brand-mark">◎</span> MANGROVE <small>MEASUREMENT LAB</small></a><span class="chip">LOCAL · EXPERIMENTAL 0.1</span></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">SAMUT SONGKHRAM / TD_008</p><h1>ตรวจลำต้น ก่อนเชื่อตัวเลข</h1><p class="lead">เปรียบเทียบ V3.1 กับรุ่นทดลอง โดยตรวจหลักฐานของต้นไม้ต้นเดียวกัน</p></div><div class="notice"><strong>ยังไม่ผ่านการตรวจสอบภาคสนาม</strong><p>ผลฟิตและความเสถียรเป็นหลักฐานทางเรขาคณิต ไม่ใช่เปอร์เซ็นต์ความถูกต้อง<br>เส้นผ่านศูนย์กลางต่างระดับ POM ไม่ใช่ DBH และไม่ส่งต่อเข้าสูตรชีวมวลอัตโนมัติ</p></div></div>
+    <div id="loadError" class="error" role="alert" hidden></div>
+    <section id="stats" class="stats" aria-label="สรุปผล"><div>กำลังโหลดผลวิเคราะห์…</div></section>
+    <section class="panel learning-panel" aria-label="เรียนรู้จากคำตอบของคุณ">
+      <div class="panel-heading"><h2>เรียนรู้จากคำตอบของคุณ</h2><button id="trainReviews">อัปเดตการเรียนรู้</button></div>
+      <p id="learningSummary">กำลังโหลดคำตอบทั้งหมด…</p>
+      <p id="reviewSync" role="status" aria-live="polite">กำลังตรวจการบันทึกลงเครื่อง…</p>
+      <p id="learningStatus" class="muted" role="status"></p>
+      <p class="muted">โมเดลเรียนรู้การคัดต้นเอา/ไม่เอา คำตอบของคุณมีสิทธิ์เหนือคำแนะนำเสมอ ความตรงกันนี้ไม่ใช่ความแม่นของเส้นผ่านศูนย์กลาง</p>
+      <div class="download-links"><a href="data/learning/reviewed-results.csv" download>ผลที่ประมวลตามคำตอบทั้งหมด CSV</a><a href="/api/reviews.csv" download>สำรองคำตอบที่บันทึกลงเครื่อง CSV</a><a href="data/learning/REPORT.md">รายงานการเรียนรู้</a></div>
+    </section>
+    <section class="workspace">
+      <aside class="inventory panel"><div class="panel-heading"><h2>ต้นไม้ทั้งหมด</h2><span id="count">—</span></div>
+        <label for="search">ค้นหา Tree ID</label><input id="search" type="search" placeholder="เช่น 0050" autocomplete="off">
+        <label for="filter">กรองต้นไม้</label><select id="filter"><option value="ALL">ทั้งหมด</option><option value="REVIEW_KEEP">คุณเลือกเอา</option><option value="REVIEW_REJECT">คุณเลือกไม่เอา</option><option value="REVIEW_EDIT">คุณขอแก้ไข</option><option value="DISAGREE">โมเดลเห็นต่างจากคุณ</option><option value="STANDARD_DBH">Standard DBH</option><option value="ALTERNATIVE_POM">Alternative POM</option><option value="MANUAL_REVIEW">ต้องตรวจทาน</option><option value="CHANGED">ผลเปลี่ยนจาก baseline</option></select>
+        <div id="trees" class="trees" role="list" aria-label="รายชื่อต้นไม้"></div>
+      </aside>
+      <section class="panel overview-panel"><div class="panel-heading"><div><p class="eyebrow">01 / SURVEY CONTEXT</p><h2>ภาพรวม point cloud</h2></div><button id="overviewReset">มุมเริ่มต้น</button></div>
+        <div id="overview" class="viewport"><p class="canvas-message">กำลังเตรียมภาพ 3D…</p></div>
+        <div class="view-footer"><span id="overviewStatus">คลิก marker เพื่อเปิดหลักฐานต้นเดียวกัน</span><span>ลากเพื่อหมุน · ล้อเมาส์เพื่อซูม · คลิกขวาลากเพื่อเลื่อน</span></div>
+        <div class="legend"><span><i class="standard"></i>Standard</span><span><i class="alternative"></i>Alternative</span><span><i class="manual"></i>ตรวจทาน</span><span><i class="selected"></i>ต้นที่เลือก</span></div>
+      </section>
+    </section>
+    <section class="detail panel" id="detail"><div class="panel-heading"><div><p class="eyebrow">02 / TREE EVIDENCE</p><h2 id="treeTitle">เลือกต้นไม้เพื่อตรวจสอบ</h2></div><span id="treeStatus" class="chip"></span></div>
+      <div id="learningRecord" class="learning-record"></div>
+      <div id="comparison" class="comparison"></div>
+      <div class="evidence-grid"><div><div class="toolbar"><span>หลักฐาน 3D ของต้นที่เลือก</span><div><label><input type="checkbox" id="showContext" checked> จุดรอบลำต้น</label><button id="detailReset">มุมเริ่มต้น</button></div></div><div id="treeView" class="viewport detail-view"></div><div class="legend"><span><i class="accepted"></i>จุดที่ใช้ฟิต</span><span><i class="rejected"></i>จุดที่ตัดออก</span><span><i class="plane"></i>ระนาบวัด</span><span><i class="axis"></i>แกนลำต้น</span></div><p id="evidenceNote" class="muted"></p><div class="cross-section-panel"><div class="subpanel-heading"><div><p class="eyebrow">03 / SECTION EVIDENCE</p><h3>ภาพตัดหน้าตัดระดับที่เลือก</h3></div><span id="sectionStatus" class="chip">กำลังโหลด</span></div><canvas id="crossSectionCanvas" aria-label="ภาพตัดหน้าตัดของต้นไม้"></canvas><div class="legend"><span><i class="accepted"></i>จุดที่ใช้ฟิต</span><span><i class="rejected"></i>จุดที่ตัดออก</span><span><i class="fit-circle"></i>วงฟิตวินิจฉัย</span></div><p id="sectionNote" class="muted"></p></div></div>
+      <div class="diagnostics"><h3>เหตุผลและคุณภาพหลักฐาน</h3><div id="reasons"></div><dl id="metrics"></dl><p class="method-note">เส้นรอบวง πD สมมติหน้าตัดเป็นวงกลม ส่วนเส้นรอบรูปจริงยังไม่รายงานเมื่อข้อมูลไม่รองรับ การฟิตที่แสดงสำหรับต้นตรวจทานเป็นเพียงค่าช่วยวินิจฉัย</p><div class="decision-panel"><div class="subpanel-heading"><div><p class="eyebrow">04 / REVIEW DECISION</p><h3>บันทึกการตัดสินใจของ Tree ID</h3></div><span id="decisionSaved" class="muted"></span></div><div class="decision-buttons"><button id="decisionKeep" class="decision-button keep">เอาต้นนี้</button><button id="decisionReject" class="decision-button reject">ไม่เอาต้นนี้</button><button id="decisionEdit" class="decision-button edit">แก้ไข / ระบุเหตุผล</button></div><form id="decisionForm" class="decision-form" hidden><div class="decision-fields"><label>สถานะ<select id="decisionStatus"><option value="KEEP">เอา</option><option value="REJECT">ไม่เอา</option><option value="EDIT">แก้ไข</option></select></label><label>POM ที่ต้องการ (m)<input id="decisionPom" type="number" min="0" max="10" step="0.01" placeholder="เช่น 1.30"></label><label>เส้นผ่านศูนย์กลาง (cm)<input id="decisionDiameter" type="number" min="0" step="0.01" placeholder="ถ้าตรวจวัดเอง"></label></div><label>หมายเหตุ<textarea id="decisionNote" rows="3" placeholder="เช่น ระดับ POM มีรากค้ำยัน / ใช้หน้าตัดระดับ 2.10 m"></textarea></label><div class="decision-form-actions"><button type="button" id="decisionCancel">ยกเลิก</button><button type="button" id="decisionClear">ล้างการบันทึก</button><button type="submit" class="save">บันทึก</button></div></form></div></div></div>
+      <details open><summary>เปรียบเทียบการเปลี่ยนแต่ละองค์ประกอบ (ablation)</summary><div class="table-scroll"><table><thead><tr><th>วิธีทดลอง</th><th>สถานะ</th><th>ระดับ POM (m)</th><th>เส้นผ่านศูนย์กลาง (cm)</th></tr></thead><tbody id="ablation"></tbody></table></div><p class="muted">แต่ละแถวเลือก POM ใหม่ได้ ต้องตรวจระดับและระนาบก่อนเทียบตัวเลข จำนวนต้นที่ผ่านเพิ่มหรือลดไม่ยืนยันความแม่นยำ</p></details>
+      <details><summary>หลักฐานและเหตุผลทุกระดับ 1.30–4.00 m</summary><div class="table-scroll"><table><thead><tr><th>POM (m)</th><th>ฟิตวินิจฉัย D (cm)</th><th>มุมที่รองรับ</th><th>ช่องว่างมากสุด</th><th>เหตุผลไม่ผ่าน</th></tr></thead><tbody id="profile"></tbody></table></div></details>
+    </section>
+    <section class="bottom-grid"><article class="panel downloads"><p class="eyebrow">05 / REPRODUCIBLE EVIDENCE</p><h2>ข้อมูลสำหรับตรวจต่อ</h2><p>118 Tree IDs เดิม · ผลเก็บแยกจาก V2 / V3 / V3.1</p><div class="download-links"><a href="data/measurements.csv" download>ผลวัดรุ่นทดลอง CSV ↗</a><a href="data/ablation.csv" download>เปรียบเทียบรายต้น CSV ↗</a><a href="data/field-template.csv" download>แบบบันทึกภาคสนาม CSV ↗</a><a href="data/field-shortlist.csv" download>25 ต้นที่ควรตรวจซ้ำ ↗</a><a id="decisionDownload" href="#" download="tree-review-decisions.csv">บันทึกการตัดสินใจ CSV ↗</a><a href="data/coordinate-audit.json">หลักฐานการแปลงพิกัด ↗</a><a href="data/measurements.json">ข้อมูลและ provenance ↗</a></div></article>
+    <article class="panel"><p class="eyebrow">04 / ROBUSTNESS, NOT FIELD ACCURACY</p><h2>ทดสอบกับรูปทรงที่รู้คำตอบ</h2><p id="synthetic">กำลังโหลดผลทดสอบ…</p><p class="muted">ต้นเอียง · หน้าตัดวงรี · จุดขาดด้านเดียว · noise · รากค้ำยัน · ต้นข้างเคียง รวมการเปลี่ยนความหนา slice ความหนาแน่น และความคลาดเคลื่อนแกน</p><a href="data/synthetic-benchmark.csv" download>ผล synthetic CSV ↗</a> <a href="data/synthetic-sensitivity.csv" download>Sensitivity CSV ↗</a></article></section>
+    <footer>TD_008 · local research preview · ไม่ใช่ผลสำรวจรับรอง · ข้อมูลแสดงใน 3D เป็นตัวอย่างย่อจาก LAS ที่ตรวจ SHA-256 แล้ว</footer>
+  </main><script type="module" src="app.js?v=feedback-1"></script>
+</body></html>
